@@ -34,7 +34,7 @@ self.emailLabel.text = [dict objectForKey:@"email"];
 
 This approach is okay but not scalable. Response from server can contains 20 or more different keys, and typing [dict objectForKey:@"key"] is tedious and error prone. If we type wrong key string, the app will crash! The compiler cannot help us detect error, and we can only find these crash when we do actual test at runtime. If we need to pass the data to another controller, we will have more repetitive tasks to do. And worse, if in the future server includes more attributes, then we have to edit all the ViewControllers to add the extra attributes.
 
-So we have to find a better approach. This time we define a plain model class and convert the NSDictionary/NSArray into the plain model object when we retrieve data from server. Then in the view, we can simply use the class just defined, so XCode can help autocomplete the fields for us.
+So we have to find a better approach. This time we define a plain model class and convert the NSDictionary/NSArray into the plain model object when we retrieve data from server. Then in the view, we can simply use that class and XCode can autocomplete the fields for us.
 
 Let define an user class to model above json:
 
@@ -102,7 +102,7 @@ If you want to exclude some certain attributes, just create an NSArray contains 
 + (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict exclude:(NSArray*)excludeArray;
 ```
 
-There is a use case that you need to build a dictionary from object, so that you can build NSDictionary params for AFNetworking:
+There is a use case that you need to build NSDictionary params for AFNetworking:
 
 ```
 + (NSDictionary*) dictionaryForObject:(id)obj;
@@ -120,7 +120,7 @@ If the json is an array, we can also convert the NSArray of dictionary into NSAr
 + (NSMutableArray*) mutableArrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
 ```
 
-The RMMapper supports relationship in your class as well. Lets assume we now have JSON for a room as below:
+RMMapper supports relationship in your class as well. Lets assume we now have JSON for a room as below:
 
 ```
 {
@@ -186,6 +186,8 @@ About
 =====
 
 The code to retrieve all attributes of a class is taken from http://stackoverflow.com/questions/754824/get-an-object-attributes-list-in-objective-c/13000074#13000074
+
+Thanks Farthen and all user contributes to that thread!
 
 
 License
