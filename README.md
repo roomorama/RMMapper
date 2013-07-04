@@ -1,6 +1,6 @@
 Setup
 ========
-You can drag the RMMapper folder to your project.
+You can drag the RMMapper folder to your project. This library must be ARC enabled.
 
 Usage
 =====
