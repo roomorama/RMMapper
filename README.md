@@ -86,6 +86,12 @@ So in order for RMMapper to work, we must define our class with attributes the s
 Methods
 =======
 
+You can retrieve list of attributes of a class by:
+
+```
++ (NSDictionary *)propertiesForClass:(Class)cls;
+```
+
 If you have an object and you want to populate it's attributes from a dictionary, there is a method for that:
 
 ```
