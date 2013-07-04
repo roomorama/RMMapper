@@ -1,7 +1,3 @@
-RMMapper
-========
-
-
 Setup
 ========
 You can drag the RMMapper folder to your project.
