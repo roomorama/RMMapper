@@ -168,14 +168,14 @@ Then done, your class is ready to be archived! You can use category NSUserDefaul
 
 // ...
 NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-[defaults setCustomObject:user forKey:@"SAVED_DATA"];
+[defaults rm_setCustomObject:user forKey:@"SAVED_DATA"];
 
 ```
 
 To retrieve the custom object from NSUserDefaults:
 
 ```
-user = [defaults customObjectForKey:@"SAVED_DATA"];
+user = [defaults rm_customObjectForKey:@"SAVED_DATA"];
 ```
 
 To make a class copyable, just include below code into your class:
