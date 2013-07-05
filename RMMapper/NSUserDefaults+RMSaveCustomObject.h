@@ -16,11 +16,11 @@
  
  Answer from http://stackoverflow.com/questions/2315948/how-to-store-custom-objects-in-nsuserdefaults/2315972#2315972
  */
--(void) setCustomObject:(id)obj forKey:(NSString*)key;
+-(void) rm_setCustomObject:(id)obj forKey:(NSString*)key;
 
 
 /** Load to NSUserDefaults
  */
--(id) customObjectForKey:(NSString*)key;
+-(id) rm_customObjectForKey:(NSString*)key;
 
 @end

@@ -27,7 +27,7 @@
     // Get data from NSUserDefaults. If not available, read it from file and
     // save to NSUserDefaults
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    self.rooms = [defaults customObjectForKey:@"SAVED_DATA"];
+    self.rooms = [defaults rm_customObjectForKey:@"SAVED_DATA"];
     
     if (!self.rooms) {
         NSString* path = [[NSBundle mainBundle] pathForResource:@"featured_destinations"
@@ -40,7 +40,7 @@
         self.rooms = [RMMapper mutableArrayOfClass:[RMRoom class]
                              fromArrayOfDictionary:responseJSONResult];
         
-        [defaults setCustomObject:self.rooms forKey:@"SAVED_DATA"];
+        [defaults rm_setCustomObject:self.rooms forKey:@"SAVED_DATA"];
     }
 }
 
