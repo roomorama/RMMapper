@@ -2,6 +2,12 @@ Setup
 ========
 You can drag the RMMapper folder to your project. This library must be ARC enabled.
 
+RMMapper can be installed by CocoaPods. Add below line to your Podfile to install it.
+
+```
+pod 'RMMapper',       '~> 1.0.0'
+```
+
 Usage
 =====
 
