@@ -10,4 +10,10 @@
 
 @implementation RMUser
 
+
+- (NSArray *)exceptedProperties
+{
+    return @[@"display"];
+}
+
 @end
