@@ -184,6 +184,22 @@ To retrieve the custom object from NSUserDefaults:
 user = [defaults rm_customObjectForKey:@"SAVED_DATA"];
 ```
 
+If you want to exclude some properties from being archived, you can override method `rm_excludedProperties` in your class:
+
+```
+#import "RMUser.h"
+
+@implementation RMUser
+
+
+- (NSArray *)rm_excludedProperties
+{
+    return @[@"display"];
+}
+
+@end
+```
+
 To make a class copyable, just include below code into your class:
 
 ```
