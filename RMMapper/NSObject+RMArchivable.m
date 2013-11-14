@@ -15,7 +15,7 @@
 - (void)encodeWithCoder:(NSCoder *)encoder {
     //Encode properties, other class variables, etc
     NSDictionary* propertyDict = [RMMapper propertiesForClass:[self class]];
-    NSArray *exceptedProperties = [self rm_exceptedProperties];
+    NSArray *exceptedProperties = [self rm_excludedProperties];
     
     for (NSString* key in propertyDict) {
         if (!exceptedProperties || ![exceptedProperties containsObject:key]) {
@@ -30,7 +30,7 @@
     if([self init]) {
         //decode properties, other class vars
         NSDictionary* propertyDict = [RMMapper propertiesForClass:[self class]];
-        NSArray *exceptedProperties = [self rm_exceptedProperties];
+        NSArray *exceptedProperties = [self rm_excludedProperties];
         
         for (NSString* key in propertyDict) {
             if (!exceptedProperties || ![exceptedProperties containsObject:key]) {
@@ -42,7 +42,7 @@
     return self;
 }
 
-- (NSArray *)rm_exceptedProperties
+- (NSArray *)rm_excludedProperties
 {
     // nothing to do
     return nil;

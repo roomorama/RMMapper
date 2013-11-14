@@ -11,6 +11,6 @@
 @interface NSObject (RMArchivable)
 
 
-- (NSArray *)rm_exceptedProperties;
+- (NSArray *)rm_excludedProperties;
 
 @end
