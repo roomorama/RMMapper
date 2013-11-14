@@ -10,7 +10,7 @@
 #import "RMUser.h"
 #import "NSObject+RMArchivable.h"
 
-@interface RMRoom : NSObject
+@interface RMRoom : NSObject <NSCoding>
 
 // The attributes is exactly same as the JSON key
 @property (nonatomic, retain) NSNumber* id;

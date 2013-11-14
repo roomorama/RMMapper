@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "NSObject+RMArchivable.h"
 
-@interface RMUser : NSObject
+@interface RMUser : NSObject <NSCoding>
 
 @property (nonatomic, retain) NSNumber* id;
 @property (nonatomic, retain) NSString* display;

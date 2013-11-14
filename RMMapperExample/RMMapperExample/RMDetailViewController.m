@@ -7,6 +7,7 @@
 //
 
 #import "RMDetailViewController.h"
+#import "NSUserDefaults+RMSaveCustomObject.h"
 
 @interface RMDetailViewController ()
 
@@ -32,6 +33,7 @@
     if (!self.room) {
         return;
     }
+    
     self.titleLabel.text = self.room.title;
     self.typeLabel.text = self.room.type;
     self.rateLabel.text = [NSString stringWithFormat:@"%@ %@",
@@ -44,7 +46,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end
