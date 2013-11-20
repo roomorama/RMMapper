@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "RMUser.h"
 #import "NSObject+RMArchivable.h"
-#import "RMMappingKeyPath.h"
+#import "RMMappingKeyPathObject.h"
 
 @interface RMRoom : NSObject <NSCoding, RMMappingKeyPathObject>
 

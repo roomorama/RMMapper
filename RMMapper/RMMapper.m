@@ -74,7 +74,7 @@ static const char *getPropertyType(objc_property_t property) {
     // and if object conform this protocol, we get mapping for this class
     NSDictionary *keyPaths = nil;
     if ([cls conformsToProtocol:@protocol(RMMappingKeyPathObject)]) {
-        keyPaths = [((Class<RMMappingKeyPathObject>)cls) rm_mappingKeyPathsForPropertyKeys];
+        keyPaths = [((Class<RMMappingKeyPathObject>)cls) rm_dataKeysForClassProperties];
     }
     
     NSDictionary* properties = [RMMapper propertiesForClass:cls];

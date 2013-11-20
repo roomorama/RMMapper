@@ -15,6 +15,6 @@
 @protocol RMMappingKeyPathObject <NSObject>
 
 // Mapping for properties keys
-+ (NSDictionary *)rm_mappingKeyPathsForPropertyKeys;
++ (NSDictionary *)rm_dataKeysForClassProperties;
 
 @end
