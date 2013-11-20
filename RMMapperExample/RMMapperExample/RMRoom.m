@@ -10,4 +10,12 @@
 
 @implementation RMRoom
 
++ (NSDictionary *)rm_mappingKeyPathsForPropertyKeys
+{
+    return @{
+             @"countryCode" : @"country_code",
+             @"currencyCode" : @"currency_code",
+             };
+}
+
 @end

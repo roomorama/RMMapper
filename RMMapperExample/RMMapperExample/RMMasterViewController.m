@@ -81,7 +81,7 @@
     RMRoom* room = [self.rooms objectAtIndex:indexPath.row];
     [cell.imgView setImageWithURL:[NSURL URLWithString:room.thumbnail]];
     cell.mainLabel.text = room.title;
-    cell.subLabel.text = [NSString stringWithFormat:@"%@, %@", room.city, room.country_code];
+    cell.subLabel.text = [NSString stringWithFormat:@"%@, %@", room.city, room.countryCode];
     return cell;
 }
 

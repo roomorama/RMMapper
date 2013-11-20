@@ -37,7 +37,7 @@
     self.titleLabel.text = self.room.title;
     self.typeLabel.text = self.room.type;
     self.rateLabel.text = [NSString stringWithFormat:@"%@ %@",
-                           self.room.currency_code,
+                           self.room.currencyCode,
                            self.room.price];
     self.hostLabel.text = self.room.host.display;
     self.certifiedLabel.text = [self.room.host.certified stringValue];
