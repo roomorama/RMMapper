@@ -1,5 +1,6 @@
 #import "RMMapper.h"
 #import <objc/runtime.h>
+#import "RMMapping.h"
 
 @implementation RMMapper
 
@@ -68,21 +69,33 @@ static const char *getPropertyType(objc_property_t property) {
     }
     
     Class cls = [obj class];
+    
+    // Check object for conforming RMMappingKeyPathObject,
+    // and if object conform this protocol, we get mapping for this class
+    NSDictionary *keyPaths = nil;
+    if ([obj conformsToProtocol:@protocol(RMMapping)]) {
+        keyPaths = [((id<RMMapping>)obj) rm_dataKeysForClassProperties];
+    }
+    
     NSDictionary* properties = [RMMapper propertiesForClass:cls];
+    
+    
     // Since key of object is a string, we need to check the dict contains
     // string as key. If it contains non-string key, the key will be skipped.
     // If key is not inside the object properties, it's skipped too.
     // Otherwise assign value of key from dict to obj
     for (id key in dict) {
         // Skip for non-string key
+        
+        
         if ([key isKindOfClass:[NSString class]] == NO) {
             NSLog(@"TDUtils: key must be NSString. Received key %@", key);
             continue;
         }
         
         // If key is not inside the object properties, skip it
-        if ([properties objectForKey:key] == nil) {
-            NSLog(@"TDUtils: key %@ is not existed in class %@", key, NSStringFromClass(cls));
+        if ([properties objectForKey:key] == nil && ![keyPaths.allValues containsObject:key]) {
+            NSLog(@"TDUtils: key %@ is not existed in class or class mapping %@", key, NSStringFromClass(cls));
             continue;
         }
         
@@ -93,12 +106,25 @@ static const char *getPropertyType(objc_property_t property) {
         }
         
         // For string-key
+        
         id value = [dict objectForKey:key];
         
+        // and now we are going to find property key,
+        // at once, we must check keyPaths for mapping
+        NSString *propertyKey = nil;
+        if (keyPaths) {
+            propertyKey = [[keyPaths allKeysForObject:key] lastObject];
+        }
+        
+        // if keyPaths don't contain property for key,
+        // this key becomes a propertyKey
+        if (!propertyKey) {
+            propertyKey = key;
+        }
         
         // If the property type is NSString and the value is array,
         // join them with ","
-        NSString *propertyType = [properties objectForKey:key];
+        NSString *propertyType = [properties objectForKey:propertyKey];
         if ([propertyType isEqualToString:@"NSString"] \
             && [value isKindOfClass:[NSArray class]]) {
             NSArray* arr = (NSArray*) value;
@@ -121,12 +147,13 @@ static const char *getPropertyType(objc_property_t property) {
                 // Populate data from the value
                 [RMMapper populateObject:childObj fromDictionary:value exclude:nil];
                 
-                [obj setValue:childObj forKey:key];
+                [obj setValue:childObj forKey:propertyKey];
             }
             
             // Else, set value for key
             else {
-                [obj setValue:value forKey:key];
+                NSLog(@"Property: %@ class: %@",propertyKey, NSStringFromClass(cls));
+                [obj setValue:value forKey:propertyKey];
             }
         }
     }

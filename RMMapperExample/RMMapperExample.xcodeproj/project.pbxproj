@@ -95,6 +95,7 @@
 		4027FDE31785191A00A5F0C8 /* NSUserDefaults+RMSaveCustomObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+RMSaveCustomObject.m"; sourceTree = "<group>"; };
 		4027FDE41785191A00A5F0C8 /* RMMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMMapper.h; sourceTree = "<group>"; };
 		4027FDE51785191A00A5F0C8 /* RMMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMMapper.m; sourceTree = "<group>"; };
+		6AB92240183BB5C90021CB04 /* RMMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RMMapping.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +234,7 @@
 		4027FDDD1785191900A5F0C8 /* RMMapper */ = {
 			isa = PBXGroup;
 			children = (
+				6AB92240183BB5C90021CB04 /* RMMapping.h */,
 				4027FDDE1785191A00A5F0C8 /* NSObject+RMArchivable.h */,
 				4027FDDF1785191A00A5F0C8 /* NSObject+RMArchivable.m */,
 				4027FDE01785191A00A5F0C8 /* NSObject+RMCopyable.h */,

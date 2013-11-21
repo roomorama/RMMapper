@@ -10,4 +10,12 @@
 
 @implementation RMRoom
 
+- (NSDictionary *)rm_dataKeysForClassProperties
+{
+    return @{
+             @"countryCode" : @"country_code",
+             @"currencyCode" : @"currency_code",
+             };
+}
+
 @end
