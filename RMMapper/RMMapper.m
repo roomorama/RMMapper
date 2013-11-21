@@ -1,6 +1,6 @@
 #import "RMMapper.h"
 #import <objc/runtime.h>
-#import "RMMappingKeyPathObject.h"
+#import "RMMapping.h"
 
 @implementation RMMapper
 
@@ -73,8 +73,8 @@ static const char *getPropertyType(objc_property_t property) {
     // Check object for conforming RMMappingKeyPathObject,
     // and if object conform this protocol, we get mapping for this class
     NSDictionary *keyPaths = nil;
-    if ([cls conformsToProtocol:@protocol(RMMappingKeyPathObject)]) {
-        keyPaths = [((Class<RMMappingKeyPathObject>)cls) rm_dataKeysForClassProperties];
+    if ([obj conformsToProtocol:@protocol(RMMapping)]) {
+        keyPaths = [((id<RMMapping>)obj) rm_dataKeysForClassProperties];
     }
     
     NSDictionary* properties = [RMMapper propertiesForClass:cls];

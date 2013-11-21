@@ -12,9 +12,9 @@
  This protocol gives mapping dictionary to object
  for custom fields in json vs custom properties in object
  */
-@protocol RMMappingKeyPathObject <NSObject>
+@protocol RMMapping <NSObject>
 
 // Mapping for properties keys
-+ (NSDictionary *)rm_dataKeysForClassProperties;
+- (NSDictionary *)rm_dataKeysForClassProperties;
 
 @end

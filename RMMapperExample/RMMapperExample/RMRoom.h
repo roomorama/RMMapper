@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "RMUser.h"
 #import "NSObject+RMArchivable.h"
-#import "RMMappingKeyPathObject.h"
+#import "RMMapping.h"
 
-@interface RMRoom : NSObject <NSCoding, RMMappingKeyPathObject>
+@interface RMRoom : NSObject <NSCoding, RMMapping>
 
 // The attributes is exactly same as the JSON key
 @property (nonatomic, retain) NSNumber* id;
