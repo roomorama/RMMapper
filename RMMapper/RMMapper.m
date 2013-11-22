@@ -78,6 +78,10 @@ static const char *getPropertyType(objc_property_t property) {
     }
     free(properties);
     
+    // for  inheritance
+    if ([cls superclass] != [NSObject class])
+        [results addEntriesFromDictionary:[self propertiesForClass:[cls superclass]]];
+    
     // returning a copy here to make sure the dictionary is immutable
     return [NSDictionary dictionaryWithDictionary:results];
 }
