@@ -41,8 +41,6 @@ So we have to find a better approach. This time we define a plain model class an
 Let define an user class to model above json:
 
 ```objc
-// RMUser.h
-
 @interface RMUser : NSObject
 
 @property (nonatomic, retain) NSNumber* id;
@@ -184,7 +182,9 @@ RMMapper is very helpful when you want to archive custom object into NSUserDefau
 
 If you want to make RMUser class archivable so that you can save it into NSUserDefaults, just add this into the header: 
 
-```#import "NSObject+RMArchivable.h"``` 
+```objc
+#import "NSObject+RMArchivable.h"
+``` 
 
 Then done, your class is ready to be archived! You can use category NSUserDefaults+RMSaveCustomObject to help you archive faster:
 
@@ -194,7 +194,6 @@ Then done, your class is ready to be archived! You can use category NSUserDefaul
 // ...
 NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
 [defaults rm_setCustomObject:user forKey:@"SAVED_DATA"];
-
 ```
 
 To retrieve the custom object from NSUserDefaults:
@@ -203,7 +202,7 @@ To retrieve the custom object from NSUserDefaults:
 user = [defaults rm_customObjectForKey:@"SAVED_DATA"];
 ```
 
-If you want to exclude some properties from being archived, you can override method `rm_excludedProperties` in your class:
+If you want to exclude some properties from being archived, you can implement method `rm_excludedProperties` in `RMMapping` protocol in your class:
 
 ```objc
 #import "RMUser.h"
