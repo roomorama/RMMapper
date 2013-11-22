@@ -41,6 +41,20 @@ static const char *getPropertyType(objc_property_t property) {
     return "";
 }
 
+#define excludedFrameworkPrefixes @[@"NS", @"UI", @"CL", @"CF", @"AB", @"CA", @"CI", @"CG"]
+
+#pragma mark - Check if class type belong to Cocoa Framework
+
++(BOOL)hasBasicPrefix:(NSString*)classType {
+    for (NSString* prefix in excludedFrameworkPrefixes) {
+        if ([classType hasPrefix:prefix]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 #pragma mark - Get properties for a class
 + (NSDictionary *)propertiesForClass:(Class)cls
 {
@@ -140,8 +154,7 @@ static const char *getPropertyType(objc_property_t property) {
             // If the property type is a custom class (not NSDictionary),
             // and the value is a dictionary,
             // convert the dictionary to object of that class
-            if (![propertyType isEqualToString:@"NSString"] &&
-                ![propertyType isEqualToString:@"NSDictionary"] &&
+            if (![RMMapper hasBasicPrefix:propertyType] &&
                 [value isKindOfClass:[NSDictionary class]]) {
                 
                 // Init a child attribute with respective class
@@ -250,8 +263,7 @@ static const char *getPropertyType(objc_property_t property) {
         // If val is custom class, we will try to parse this custom class to NSDictionary
         NSString *propertyType = [properties objectForKey:property];
         
-        NSArray* excludedTypes = @[@"NSString", @"NSDictionary", @"NSArray", @"NSNumber"];
-        if ([excludedTypes indexOfObject:propertyType] == NSNotFound) {
+        if (![RMMapper hasBasicPrefix:propertyType]) {
             val = [RMMapper mutableDictionaryForObject:val include:nil];
         }
         
