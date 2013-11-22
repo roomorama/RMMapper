@@ -1,5 +1,22 @@
 #import <Foundation/Foundation.h>
 
+/**
+ * This protocol let you control conversion between data key
+ * and class properties
+ */
+@protocol RMMapping <NSObject>
+
+@optional
+
+// Allow properties to be excluded from parsing data
+- (NSArray *)rm_excludedProperties;
+
+// Mapping for properties keys to class properties
+- (NSDictionary *)rm_dataKeysForClassProperties;
+
+@end
+
+
 @interface RMMapper : NSObject
 
 /**

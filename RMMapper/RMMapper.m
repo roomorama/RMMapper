@@ -1,6 +1,12 @@
 #import "RMMapper.h"
 #import <objc/runtime.h>
-#import "RMMapping.h"
+
+#ifdef DEBUG
+#   define RMMapperLog(__FORMAT__, ...) NSLog(__FORMAT__, ##__VA_ARGS__)
+#else
+#   define RMMapperLog(...) do {} while (0)
+#endif
+
 
 @implementation RMMapper
 
@@ -62,6 +68,7 @@ static const char *getPropertyType(objc_property_t property) {
     return [NSDictionary dictionaryWithDictionary:results];
 }
 
+#pragma mark - Populate object from data dictionary
 
 +(id)populateObject:(id)obj fromDictionary:(NSDictionary *)dict exclude:(NSArray *)excludeArray {
     if (obj == nil) {
@@ -72,9 +79,9 @@ static const char *getPropertyType(objc_property_t property) {
     
     // Check object for conforming RMMappingKeyPathObject,
     // and if object conform this protocol, we get mapping for this class
-    NSDictionary *keyPaths = nil;
-    if ([obj conformsToProtocol:@protocol(RMMapping)]) {
-        keyPaths = [((id<RMMapping>)obj) rm_dataKeysForClassProperties];
+    NSDictionary *dataKeysForProperties = nil;
+    if ([obj respondsToSelector:@selector(rm_dataKeysForClassProperties)]) {
+        dataKeysForProperties = [((id<RMMapping>)obj) rm_dataKeysForClassProperties];
     }
     
     NSDictionary* properties = [RMMapper propertiesForClass:cls];
@@ -84,60 +91,57 @@ static const char *getPropertyType(objc_property_t property) {
     // string as key. If it contains non-string key, the key will be skipped.
     // If key is not inside the object properties, it's skipped too.
     // Otherwise assign value of key from dict to obj
-    for (id key in dict) {
+    for (id dataKey in dict) {
+        
         // Skip for non-string key
-        
-        
-        if ([key isKindOfClass:[NSString class]] == NO) {
-            NSLog(@"TDUtils: key must be NSString. Received key %@", key);
+        if ([dataKey isKindOfClass:[NSString class]] == NO) {
+            RMMapperLog(@"RMMapper: key must be NSString. Received key %@", dataKey);
             continue;
         }
         
-        // If key is not inside the object properties, skip it
-        if ([properties objectForKey:key] == nil && ![keyPaths.allValues containsObject:key]) {
-            NSLog(@"TDUtils: key %@ is not existed in class or class mapping %@", key, NSStringFromClass(cls));
+        // If property and dataKey is different, retrieve property from dataKeysForProperties
+        NSString* property = nil;
+        
+        if (dataKeysForProperties) {
+            property = [[dataKeysForProperties allKeysForObject:dataKey] lastObject];
+        }
+        
+        if (!property) {
+            property = dataKey;
+        }
+        
+        // If property doesn't belong to object, skip it
+        if ([properties objectForKey:property] == nil) {
+            RMMapperLog(@"RMMapper: key %@ is not existed in class or class mapping %@", property, NSStringFromClass(cls));
             continue;
         }
         
         // If key inside excludeArray, skip it
-        if (excludeArray && [excludeArray indexOfObject:key] != NSNotFound) {
-            NSLog(@"TDUtils: key %@ is skipped", key);
+        if (excludeArray && [excludeArray indexOfObject:property] != NSNotFound) {
+            RMMapperLog(@"RMMapper: key %@ is skipped", dataKey);
             continue;
         }
         
-        // For string-key
+        // Get value from dict
+        id value = [dict objectForKey:dataKey];
         
-        id value = [dict objectForKey:key];
-        
-        // and now we are going to find property key,
-        // at once, we must check keyPaths for mapping
-        NSString *propertyKey = nil;
-        if (keyPaths) {
-            propertyKey = [[keyPaths allKeysForObject:key] lastObject];
-        }
-        
-        // if keyPaths don't contain property for key,
-        // this key becomes a propertyKey
-        if (!propertyKey) {
-            propertyKey = key;
-        }
+        NSString *propertyType = [properties objectForKey:property];
         
         // If the property type is NSString and the value is array,
         // join them with ","
-        NSString *propertyType = [properties objectForKey:propertyKey];
         if ([propertyType isEqualToString:@"NSString"] \
             && [value isKindOfClass:[NSArray class]]) {
             NSArray* arr = (NSArray*) value;
             NSString* arrString = [arr componentsJoinedByString:@","];
-            [obj setValue:arrString forKey:key];
+            [obj setValue:arrString forKey:dataKey];
         }
         
         else {
             // If the property type is a custom class (not NSDictionary),
             // and the value is a dictionary,
             // convert the dictionary to object of that class
-            if ([propertyType isEqualToString:@"NSString"] == NO &&
-                [propertyType isEqualToString:@"NSDictionary"] == NO &&
+            if (![propertyType isEqualToString:@"NSString"] &&
+                ![propertyType isEqualToString:@"NSDictionary"] &&
                 [value isKindOfClass:[NSDictionary class]]) {
                 
                 // Init a child attribute with respective class
@@ -147,13 +151,12 @@ static const char *getPropertyType(objc_property_t property) {
                 // Populate data from the value
                 [RMMapper populateObject:childObj fromDictionary:value exclude:nil];
                 
-                [obj setValue:childObj forKey:propertyKey];
+                [obj setValue:childObj forKey:property];
             }
             
             // Else, set value for key
             else {
-                NSLog(@"Property: %@ class: %@",propertyKey, NSStringFromClass(cls));
-                [obj setValue:value forKey:propertyKey];
+                [obj setValue:value forKey:property];
             }
         }
     }
@@ -177,45 +180,7 @@ static const char *getPropertyType(objc_property_t property) {
     return obj;
 }
 
-
-+ (NSMutableDictionary *)mutableDictionaryForObject:(id)obj {
-    NSDictionary* propertyDict = [RMMapper propertiesForClass:[obj class]];
-    
-    NSMutableDictionary* objDict = [NSMutableDictionary dictionaryWithDictionary:propertyDict];
-    for (NSString* key in propertyDict) {
-        id val = [obj valueForKey:key];
-        [objDict setValue:val forKey:key];
-    }
-    
-    return objDict;
-}
-
-+(NSMutableDictionary *)mutableDictionaryForObject:(id)obj include:(NSArray *)includeArray {
-    NSDictionary* dict = [RMMapper dictionaryForObject:obj include:includeArray];
-    return [NSMutableDictionary dictionaryWithDictionary:dict];
-}
-
-+(NSDictionary*)dictionaryForObject:(id)obj {
-    NSMutableDictionary *mutableDict = [RMMapper mutableDictionaryForObject:obj];
-    return [NSDictionary dictionaryWithDictionary:mutableDict];
-}
-
-+ (NSDictionary*) dictionaryForObject:(id)obj include:(NSArray*)includeArray {
-    NSDictionary* propertyDict = [RMMapper propertiesForClass:[obj class]];
-    
-    NSMutableDictionary* objDict = [NSMutableDictionary dictionaryWithCapacity:includeArray.count];
-    for (NSString* key in propertyDict) {
-        if (includeArray && [includeArray indexOfObject:key] == NSNotFound) {
-            NSLog(@"TDUtils: key %@ is skipped", key);
-            continue;
-        }
-        
-        id val = [obj valueForKey:key];
-        [objDict setValue:val forKey:key];
-    }
-    
-    return objDict;
-}
+#pragma mark - Populate array of class from data array
 
 +(NSArray *)arrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray *)array {
     NSMutableArray *mutableArray = [RMMapper mutableArrayOfClass:cls fromArrayOfDictionary:array];
@@ -225,12 +190,18 @@ static const char *getPropertyType(objc_property_t property) {
 }
 
 +(NSMutableArray *)mutableArrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray *)array {
+    
+    if (!array) {
+        return nil;
+    }
+    
     NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithCapacity:[array count]];
     
     for (id item in array) {
+        
         // The item must be a dictionary. Otherwise, skip it
         if ([item isKindOfClass:[NSDictionary class]] == NO) {
-            NSLog(@"TDUtils: item inside array must be NSDictionary object");
+            RMMapperLog(@"RMMapper: item inside array must be NSDictionary object");
             continue;
         }
         
@@ -241,6 +212,69 @@ static const char *getPropertyType(objc_property_t property) {
     
     return mutableArray;
 }
+
+
+#pragma mark - Convert plain object to dictionary
+
++ (NSDictionary*) mutableDictionaryForObject:(id)obj include:(NSArray*)includeArray {
+    NSDictionary* properties = [RMMapper propertiesForClass:[obj class]];
+    
+    NSDictionary *dataKeysForProperties = nil;
+    if ([obj respondsToSelector:@selector(rm_dataKeysForClassProperties)]) {
+        dataKeysForProperties = [((id<RMMapping>)obj) rm_dataKeysForClassProperties];
+    }
+    
+    NSMutableDictionary* objDict = [NSMutableDictionary dictionary];
+    
+    for (NSString* property in properties) {
+        
+        // If includeArray is provided, skip if the property is not inside includeArray
+        if (includeArray && [includeArray indexOfObject:property] == NSNotFound) {
+            RMMapperLog(@"RMMapper: key %@ is skipped", property);
+            continue;
+        }
+        
+        // Get dataKey for given property
+        NSString* dataKey = nil;
+        if (dataKeysForProperties) {
+            dataKey = [dataKeysForProperties objectForKey:property];
+        }
+        
+        // Fall back to property
+        if (!dataKey) {
+            dataKey = property;
+        }
+        
+        id val = [obj valueForKey:property];
+        
+        // If val is custom class, we will try to parse this custom class to NSDictionary
+        NSString *propertyType = [properties objectForKey:property];
+        
+        NSArray* excludedTypes = @[@"NSString", @"NSDictionary", @"NSArray", @"NSNumber"];
+        if ([excludedTypes indexOfObject:propertyType] == NSNotFound) {
+            val = [RMMapper mutableDictionaryForObject:val include:nil];
+        }
+        
+        [objDict setValue:val forKey:dataKey];
+    }
+    
+    return objDict;
+}
+
++ (NSMutableDictionary *)mutableDictionaryForObject:(id)obj {
+    return [RMMapper mutableDictionaryForObject:obj include:nil];
+}
+
++(NSDictionary *)dictionaryForObject:(id)obj include:(NSArray *)includeArray {
+    NSMutableDictionary* dict = [RMMapper mutableDictionaryForObject:obj include:includeArray];
+    return [NSDictionary dictionaryWithDictionary:dict];
+}
+
++(NSDictionary*)dictionaryForObject:(id)obj {
+    NSMutableDictionary *mutableDict = [RMMapper mutableDictionaryForObject:obj];
+    return [NSDictionary dictionaryWithDictionary:mutableDict];
+}
+
 
 
 

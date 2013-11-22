@@ -9,28 +9,38 @@
 #import "NSObject+RMArchivable.h"
 #import "RMMapper.h"
 
-
 @implementation NSObject (RMArchivable)
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
-    //Encode properties, other class variables, etc
+    // Encode properties, other class variables, etc
     NSDictionary* propertyDict = [RMMapper propertiesForClass:[self class]];
-    NSArray *excludedProperties = [self rm_excludedProperties];
+    
+    // Retrieve excluded properties
+    NSArray *excludedProperties = nil;
+    
+    if ([self respondsToSelector:@selector(rm_excludedProperties)]) {
+        excludedProperties = [self performSelector:@selector(rm_excludedProperties)];
+    }
     
     for (NSString* key in propertyDict) {
         if (!excludedProperties || ![excludedProperties containsObject:key]) {
             id value = [self valueForKey:key];
             [encoder encodeObject:value forKey:key];
-        }
-        
+        }        
     }
 }
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if([self init]) {
-        //decode properties, other class vars
+        // Decode properties, other class vars
         NSDictionary* propertyDict = [RMMapper propertiesForClass:[self class]];
-        NSArray *excludedProperties = [self rm_excludedProperties];
+        
+        // Retrieve excluded properties
+        NSArray *excludedProperties = nil;
+        
+        if ([self respondsToSelector:@selector(rm_excludedProperties)]) {
+            excludedProperties = [self performSelector:@selector(rm_excludedProperties)];
+        }
         
         for (NSString* key in propertyDict) {
             if (!excludedProperties || ![excludedProperties containsObject:key]) {
@@ -40,12 +50,6 @@
         }
     }
     return self;
-}
-
-- (NSArray *)rm_excludedProperties
-{
-    // nothing to do
-    return nil;
 }
 
 @end

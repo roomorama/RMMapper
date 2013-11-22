@@ -16,9 +16,17 @@
     typeof(self) copiedObj = [[[self class] allocWithZone:zone] init];
     if (copiedObj) {
         NSDictionary* properties = [RMMapper propertiesForClass:[self class]];
+        // Retrieve excluded properties
+        NSArray *excludedProperties = nil;
+        
+        if ([self respondsToSelector:@selector(rm_excludedProperties)]) {
+            excludedProperties = [self performSelector:@selector(rm_excludedProperties)];
+        }
         for (NSString* key in properties) {
-            id val = [self valueForKey:key];
-            [copiedObj setValue:val forKey:key];
+            if (!excludedProperties || ![excludedProperties containsObject:key]) {
+                id val = [self valueForKey:key];
+                [copiedObj setValue:val forKey:key];
+            }
         }
     }
     return copiedObj;

@@ -41,6 +41,8 @@
                            self.room.price];
     self.hostLabel.text = self.room.host.display;
     self.certifiedLabel.text = [self.room.host.certified stringValue];
+    
+    NSLog(@"%@", [RMMapper dictionaryForObject:self.room]);
 }
 
 - (void)didReceiveMemoryWarning

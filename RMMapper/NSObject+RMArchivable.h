@@ -10,7 +10,4 @@
 
 @interface NSObject (RMArchivable)
 
-
-- (NSArray *)rm_excludedProperties;
-
 @end
