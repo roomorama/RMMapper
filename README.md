@@ -5,7 +5,7 @@ You can drag the RMMapper folder to your project. This library must be ARC enabl
 RMMapper can be installed by CocoaPods. Add below line to your Podfile to install it.
 
 ```
-pod 'RMMapper',       '~> 1.0.0'
+pod 'RMMapper',       '~> 1.1.0'
 ```
 
 Usage
@@ -28,7 +28,7 @@ Let's assume we retrieve a user json like this:
 
 We can build the view by:
 
-```
+```objc
 self.nameLabel.text = [dict objectForKey:@"name"];
 self.ageLabel.text = [dict objectForKey:@"age"];
 self.emailLabel.text = [dict objectForKey:@"email"];
@@ -40,7 +40,7 @@ So we have to find a better approach. This time we define a plain model class an
 
 Let define an user class to model above json:
 
-```
+```objc
 // RMUser.h
 
 @interface RMUser : NSObject
@@ -55,7 +55,7 @@ Let define an user class to model above json:
 
 In the view, it becomes:
 
-```
+```objc
 self.nameLabel.text = user.name;
 self.ageLabel.text = [user.age stringValue];
 self.emailLabel.text = user.email;
@@ -63,7 +63,7 @@ self.emailLabel.text = user.email;
 
 Well this is much cleaner! We have XCode auto complete the fields for us, so we don't have to worry about the wrong key like in previous approach. But we still need to convert the data into this object:
 
-```
+```objc
 RMUser* user = [[RMUser alloc] init];
 user.name = [dict objectForKey:@"name"];
 user.age = [dict objectForKey:@"age"];
@@ -75,7 +75,7 @@ Doing above code is boring and luckily we have a better way to do it. If we can 
 
 Using RMMapper, the above code becomes super simple:
 
-```
+```objc
 RMUser* user = [RMMapper objectWithClass:[RMUser class] fromDictionary:dict];
 ```
 
@@ -87,32 +87,51 @@ Behind the scene
 
 What happen behind the scene: RMMapper retrieves attributes from the class. For each attribute, it gets the value from dict with the same key, and if existed, set the value to object attribute.
 
-So in order for RMMapper to work, we must define our class with attributes the same as JSON key we get from server. As above example, id, name, age, email is key taken directly from JSON string.
+In above example, to keep things simple, we define our class with attributes the same as JSON key we get from server: id, name, age, email is key taken directly from JSON string.
+
+If you want to map JSON key to class property, you can do so. In your model class, implement method `rm_dataKeysForClassProperties` in `RMMapping` protocol:
+
+```objc
+#import "RMRoom.h"
+
+@implementation RMRoom
+
+- (NSDictionary *)rm_dataKeysForClassProperties
+{
+    // country_code is json key, countryCode is class property
+    return @{
+             @"countryCode" : @"country_code",
+             @"currencyCode" : @"currency_code",
+             };
+}
+
+@end
+```
 
 Methods
 =======
 
 You can retrieve list of attributes of a class by:
 
-```
+```objc
 + (NSDictionary *)propertiesForClass:(Class)cls;
 ```
 
 If you have an object and you want to populate it's attributes from a dictionary, there is a method for that:
 
-```
+```objc
 + (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict;
 ```
 
 If you want to exclude some certain attributes, just create an NSArray contains the attributes string as parameter for exclude:
 
-```
+```objc
 + (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict exclude:(NSArray*)excludeArray;
 ```
 
 There is a use case that you need to build NSDictionary params for AFNetworking:
 
-```
+```objc
 + (NSDictionary*) dictionaryForObject:(id)obj;
 + (NSDictionary*) dictionaryForObject:(id)obj include:(NSArray*)includeArray;
 + (NSMutableDictionary*) mutableDictionaryForObject:(id)obj;
@@ -123,14 +142,14 @@ You can convert an object to NSDictionary so that NSLog can print its value too!
 
 If the json is an array, we can also convert the NSArray of dictionary into NSArray of object with predefined class. You can see the example for more detail.
 
-```
+```objc
 + (NSArray*) arrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
 + (NSMutableArray*) mutableArrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
 ```
 
 RMMapper supports relationship in your class as well. Lets assume we now have JSON for a room as below:
 
-```
+```objc
 {
   "id":879302,
   "title":"My room",
@@ -141,7 +160,7 @@ RMMapper supports relationship in your class as well. Lets assume we now have JS
 
 You can define class RMRoom as below:
 
-```
+```objc
 // RMRoom.h
 #import "RMUser.h"
 
@@ -169,7 +188,7 @@ If you want to make RMUser class archivable so that you can save it into NSUserD
 
 Then done, your class is ready to be archived! You can use category NSUserDefaults+RMSaveCustomObject to help you archive faster:
 
-```
+```objc
 #import "NSUserDefaults+RMSaveCustomObject.h"
 
 // ...
@@ -180,13 +199,13 @@ NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
 
 To retrieve the custom object from NSUserDefaults:
 
-```
+```objc
 user = [defaults rm_customObjectForKey:@"SAVED_DATA"];
 ```
 
 If you want to exclude some properties from being archived, you can override method `rm_excludedProperties` in your class:
 
-```
+```objc
 #import "RMUser.h"
 
 @implementation RMUser
@@ -202,7 +221,7 @@ If you want to exclude some properties from being archived, you can override met
 
 To make a class copyable, just include below code into your class:
 
-```
+```objc
 #import "NSObject+RMCopyable.h"
 ```
 
