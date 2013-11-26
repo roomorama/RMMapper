@@ -30,7 +30,7 @@
     }
 }
 
-- (id)initWithCoder:(NSCoder *)decoder {
+- (instancetype)initWithCoder:(NSCoder *)decoder {
     if([self init]) {
         // Decode properties, other class vars
         NSDictionary* propertyDict = [RMMapper propertiesForClass:[self class]];
