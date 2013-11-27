@@ -12,7 +12,7 @@
 
 @implementation NSObject (RMCopyable)
 
--(id)copyWithZone:(NSZone *)zone {
+-(instancetype)copyWithZone:(NSZone *)zone {
     typeof(self) copiedObj = [[[self class] allocWithZone:zone] init];
     if (copiedObj) {
         NSDictionary* properties = [RMMapper propertiesForClass:[self class]];
