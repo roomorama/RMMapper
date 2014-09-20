@@ -55,6 +55,12 @@ static const char *getPropertyType(objc_property_t property) {
     return NO;
 }
 
++ (NSArray *)systemExcludedProperties
+{
+    return @[@"observationInfo",@"hash",@"description",@"debugDescription",@"superclass"];
+}
+
+
 #pragma mark - Get properties for a class
 + (NSDictionary *)propertiesForClass:(Class)cls
 {
@@ -63,6 +69,7 @@ static const char *getPropertyType(objc_property_t property) {
     }
     
     NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
+    NSArray *excludedProperties = [self systemExcludedProperties];
     
     unsigned int outCount, i;
     objc_property_t *properties = class_copyPropertyList(cls, &outCount);
@@ -72,8 +79,10 @@ static const char *getPropertyType(objc_property_t property) {
         if(propName) {
             const char *propType = getPropertyType(property);
             NSString *propertyName = [NSString stringWithUTF8String:propName];
-            NSString *propertyType = [NSString stringWithUTF8String:propType];
-            [results setObject:propertyType forKey:propertyName];
+            if (!excludedProperties || [excludedProperties containsObject:propertyName] == NO) {
+                NSString *propertyType = [NSString stringWithUTF8String:propType];
+                [results setObject:propertyType forKey:propertyName];
+            }
         }
     }
     free(properties);
