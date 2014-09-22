@@ -5,7 +5,7 @@ You can drag the RMMapper folder to your project. This library must be ARC enabl
 RMMapper can be installed by CocoaPods. Add below line to your Podfile to install it.
 
 ```
-pod 'RMMapper', :git => 'https://github.com/roomorama/RMMapper.git'
+pod 'RMMapper',       '~> 1.1.2'
 ```
 
 Usage
