@@ -9,6 +9,8 @@
 #import "RMMasterViewController.h"
 #import "RMDetailViewController.h"
 #import "RMRoom.h"
+#import "RMItem.h"
+#import "RMTopping.h"
 #import "RMMapper.h"
 #import "UIImageView+AFNetworking.h"
 #import "RMTableViewCell.h"
@@ -27,7 +29,9 @@
     // Get data from NSUserDefaults. If not available, read it from file and
     // save to NSUserDefaults
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    self.rooms = [defaults rm_customObjectForKey:@"SAVED_DATA"];
+    
+    // Get the data from NSUserDefaults
+//    self.rooms = [defaults rm_customObjectForKey:@"SAVED_DATA"];
     
     if (!self.rooms) {
         NSString* path = [[NSBundle mainBundle] pathForResource:@"featured_destinations"
@@ -41,6 +45,17 @@
                              fromArrayOfDictionary:responseJSONResult];
         
         [defaults rm_setCustomObject:self.rooms forKey:@"SAVED_DATA"];
+    }
+    
+    // Test different json to parse item inside an array to specified class
+    NSString* path = [[NSBundle mainBundle] pathForResource:@"item"
+                                                     ofType:@"json"];
+    NSData *theData = [NSData dataWithContentsOfFile:path];
+    id json = [NSJSONSerialization JSONObjectWithData:theData options:NSJSONReadingMutableContainers error:nil];
+    
+    RMItem* item = [RMMapper objectWithClass:[RMItem class] fromDictionary:json];
+    for (id topping in item.topping) {
+        NSLog(@"Topping :%@, class %@", [RMMapper dictionaryForObject:topping], [topping class]);
     }
 }
 

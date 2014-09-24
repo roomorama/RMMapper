@@ -14,6 +14,9 @@
 // Mapping for properties keys to class properties
 - (NSDictionary *)rm_dataKeysForClassProperties;
 
+// Parse item within array
+- (Class)rm_itemClassForArrayProperty:(NSString*)property;
+
 @end
 
 
@@ -30,8 +33,6 @@
 /** Populate existing object with values from dictionary
  */
 + (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict;
-+ (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict exclude:(NSArray*)excludeArray;
-
 
 /** Create a new object with given class and populate it with value from dictionary
  */

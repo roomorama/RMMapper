@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		273C984D19D2A96500EB3905 /* item.json in Resources */ = {isa = PBXBuildFile; fileRef = 273C984C19D2A96500EB3905 /* item.json */; };
+		273C985019D2A9DC00EB3905 /* RMItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 273C984F19D2A9DC00EB3905 /* RMItem.m */; };
+		273C985319D2AC5800EB3905 /* RMTopping.m in Sources */ = {isa = PBXBuildFile; fileRef = 273C985219D2AC5800EB3905 /* RMTopping.m */; };
 		4027FD48177D7ACC00A5F0C8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4027FD47177D7ACC00A5F0C8 /* UIKit.framework */; };
 		4027FD4A177D7ACC00A5F0C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4027FD49177D7ACC00A5F0C8 /* Foundation.framework */; };
 		4027FD4C177D7ACC00A5F0C8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4027FD4B177D7ACC00A5F0C8 /* CoreGraphics.framework */; };
@@ -41,6 +44,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		273C984C19D2A96500EB3905 /* item.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = item.json; sourceTree = "<group>"; };
+		273C984E19D2A9DC00EB3905 /* RMItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMItem.h; sourceTree = "<group>"; };
+		273C984F19D2A9DC00EB3905 /* RMItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMItem.m; sourceTree = "<group>"; };
+		273C985119D2AC5800EB3905 /* RMTopping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTopping.h; sourceTree = "<group>"; };
+		273C985219D2AC5800EB3905 /* RMTopping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTopping.m; sourceTree = "<group>"; };
 		4027FD44177D7ACC00A5F0C8 /* RMMapperExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RMMapperExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4027FD47177D7ACC00A5F0C8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4027FD49177D7ACC00A5F0C8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -148,7 +156,6 @@
 				4027FDDD1785191900A5F0C8 /* RMMapper */,
 				4027FDD81785150200A5F0C8 /* Table View Cell */,
 				4027FD7E177D82A600A5F0C8 /* Models */,
-				4027FD7C177D827200A5F0C8 /* featured_destinations.json */,
 				4027FD56177D7ACC00A5F0C8 /* RMAppDelegate.h */,
 				4027FD57177D7ACC00A5F0C8 /* RMAppDelegate.m */,
 				4027FD5F177D7ACC00A5F0C8 /* MainStoryboard.storyboard */,
@@ -162,6 +169,8 @@
 		4027FD4E177D7ACC00A5F0C8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				273C984C19D2A96500EB3905 /* item.json */,
+				4027FD7C177D827200A5F0C8 /* featured_destinations.json */,
 				4027FD4F177D7ACC00A5F0C8 /* RMMapperExample-Info.plist */,
 				4027FD50177D7ACC00A5F0C8 /* InfoPlist.strings */,
 				4027FD53177D7ACC00A5F0C8 /* main.m */,
@@ -180,6 +189,10 @@
 				4027FD81177D82C500A5F0C8 /* RMRoom.m */,
 				4027FD84177D83BB00A5F0C8 /* RMUser.h */,
 				4027FD85177D83BB00A5F0C8 /* RMUser.m */,
+				273C984E19D2A9DC00EB3905 /* RMItem.h */,
+				273C984F19D2A9DC00EB3905 /* RMItem.m */,
+				273C985119D2AC5800EB3905 /* RMTopping.h */,
+				273C985219D2AC5800EB3905 /* RMTopping.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -302,6 +315,7 @@
 				4027FD5A177D7ACC00A5F0C8 /* Default.png in Resources */,
 				4027FD5C177D7ACC00A5F0C8 /* Default@2x.png in Resources */,
 				4027FD5E177D7ACC00A5F0C8 /* Default-568h@2x.png in Resources */,
+				273C984D19D2A96500EB3905 /* item.json in Resources */,
 				4027FD61177D7ACC00A5F0C8 /* MainStoryboard.storyboard in Resources */,
 				4027FD7D177D827300A5F0C8 /* featured_destinations.json in Resources */,
 			);
@@ -314,6 +328,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				273C985019D2A9DC00EB3905 /* RMItem.m in Sources */,
 				4027FD54177D7ACC00A5F0C8 /* main.m in Sources */,
 				4027FD58177D7ACC00A5F0C8 /* RMAppDelegate.m in Sources */,
 				4027FD64177D7ACC00A5F0C8 /* RMMasterViewController.m in Sources */,
@@ -323,6 +338,7 @@
 				4027FD9C177D86A900A5F0C8 /* AFHTTPClient.m in Sources */,
 				4027FD9D177D86A900A5F0C8 /* AFHTTPRequestOperation.m in Sources */,
 				4027FD9E177D86A900A5F0C8 /* AFImageRequestOperation.m in Sources */,
+				273C985319D2AC5800EB3905 /* RMTopping.m in Sources */,
 				4027FD9F177D86A900A5F0C8 /* AFJSONRequestOperation.m in Sources */,
 				4027FDA0177D86A900A5F0C8 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				4027FDA1177D86A900A5F0C8 /* AFPropertyListRequestOperation.m in Sources */,

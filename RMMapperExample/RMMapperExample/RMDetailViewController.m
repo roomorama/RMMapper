@@ -39,7 +39,7 @@
     self.rateLabel.text = [NSString stringWithFormat:@"%@ %@",
                            self.room.currencyCode,
                            self.room.price];
-    self.hostLabel.text = self.room.host.display;
+    self.hostLabel.text = self.room.host.url;
     self.certifiedLabel.text = [self.room.host.certified stringValue];
     
     NSLog(@"%@", [RMMapper dictionaryForObject:self.room]);
