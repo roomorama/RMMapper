@@ -8,6 +8,151 @@ RMMapper can be installed by CocoaPods. Add below line to your Podfile to instal
 pod 'RMMapper'
 ```
 
+Methods
+=======
+
+You can retrieve list of attributes of a class by:
+
+```objc
++ (NSDictionary *)propertiesForClass:(Class)cls;
+```
+
+If you have an object and you want to populate it's attributes from a dictionary, there is a method for that:
+
+```objc
++ (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict;
+```
+
+There is a use case that you need to build NSDictionary params for AFNetworking:
+
+```objc
++ (NSDictionary*) dictionaryForObject:(id)obj;
++ (NSDictionary*) dictionaryForObject:(id)obj include:(NSArray*)includeArray;
++ (NSMutableDictionary*) mutableDictionaryForObject:(id)obj;
++ (NSMutableDictionary*) mutableDictionaryForObject:(id)obj include:(NSArray*)includeArray;
+```
+
+You can convert an object to NSDictionary so that NSLog can print its value too!
+
+If the json is an array, we can also convert the NSArray of dictionary into NSArray of object with predefined class. You can see the example for more detail.
+
+```objc
++ (NSArray*) arrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
++ (NSMutableArray*) mutableArrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
+```
+
+RMMapper supports relationship in your class as well. Lets assume we now have JSON for a room as below:
+
+```objc
+{
+"id":879302,
+"title":"My room",
+"address":"Singapore",
+"host":{"id":34045, "name":"David", "age":30, "email":"david@gmail.com"}
+}
+```
+
+You can define class RMRoom as below:
+
+```objc
+// RMRoom.h
+#import "RMUser.h"
+
+@interface RMRoom : NSObject
+
+@property (nonatomic, retain) NSNumber* id;
+@property (nonatomic, retain) NSString* title;
+@property (nonatomic, retain) NSString* address;
+@property (nonatomic, retain) RMUser* host;
+
+@end
+```
+
+Then if you want to access the host email, you can use ```room.host.email```
+
+
+If you want to map JSON key to class property, you can do so. In your model class, implement method `rm_dataKeysForClassProperties` in `RMMapping` protocol:
+
+```objc
+#import "RMRoom.h"
+
+@implementation RMRoom
+
+- (NSDictionary *)rm_dataKeysForClassProperties
+{
+// country_code is json key, countryCode is class property
+return @{
+@"countryCode" : @"country_code",
+@"currencyCode" : @"currency_code",
+};
+}
+
+@end
+```
+
+If your property is an array of another models, you can provide the model class so it can be automatically parsed:
+
+```objc
+-(Class)rm_itemClassForArrayProperty:(NSString *)property {
+if ([property isEqualToString:@"topping"]) {
+return [RMTopping class];
+}
+
+return nil;
+}
+```
+
+
+Usage of RMMapper
+=================
+
+RMMapper is very helpful when you want to archive custom object into NSUserDefaults, or make an object copyable. 
+
+If you want to make RMUser class archivable so that you can save it into NSUserDefaults, just add this into the header: 
+
+```objc
+#import "NSObject+RMArchivable.h"
+``` 
+
+Then done, your class is ready to be archived! You can use category NSUserDefaults+RMSaveCustomObject to help you archive faster:
+
+```objc
+#import "NSUserDefaults+RMSaveCustomObject.h"
+
+// ...
+NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+[defaults rm_setCustomObject:user forKey:@"SAVED_DATA"];
+```
+
+To retrieve the custom object from NSUserDefaults:
+
+```objc
+user = [defaults rm_customObjectForKey:@"SAVED_DATA"];
+```
+
+If you want to exclude some properties from being archived, you can implement method `rm_excludedProperties` in `RMMapping` protocol in your class:
+
+```objc
+#import "RMUser.h"
+
+@implementation RMUser
+
+
+- (NSArray *)rm_excludedProperties
+{
+return @[@"display"];
+}
+
+@end
+```
+
+To make a class copyable, just include below code into your class:
+
+```objc
+#import "NSObject+RMCopyable.h"
+```
+
+
 Usage
 =====
 
@@ -79,150 +224,6 @@ RMUser* user = [RMMapper objectWithClass:[RMUser class] fromDictionary:dict];
 
 Then all value from dictionary will be parsed into object user!
 
-
-Behind the scene
-================
-
-What happen behind the scene: RMMapper retrieves attributes from the class. For each attribute, it gets the value from dict with the same key, and if existed, set the value to object attribute.
-
-In above example, to keep things simple, we define our class with attributes the same as JSON key we get from server: id, name, age, email is key taken directly from JSON string.
-
-If you want to map JSON key to class property, you can do so. In your model class, implement method `rm_dataKeysForClassProperties` in `RMMapping` protocol:
-
-```objc
-#import "RMRoom.h"
-
-@implementation RMRoom
-
-- (NSDictionary *)rm_dataKeysForClassProperties
-{
-    // country_code is json key, countryCode is class property
-    return @{
-             @"countryCode" : @"country_code",
-             @"currencyCode" : @"currency_code",
-             };
-}
-
-@end
-```
-
-Methods
-=======
-
-You can retrieve list of attributes of a class by:
-
-```objc
-+ (NSDictionary *)propertiesForClass:(Class)cls;
-```
-
-If you have an object and you want to populate it's attributes from a dictionary, there is a method for that:
-
-```objc
-+ (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict;
-```
-
-If you want to exclude some certain attributes, just create an NSArray contains the attributes string as parameter for exclude:
-
-```objc
-+ (id) populateObject:(id)obj fromDictionary:(NSDictionary*)dict exclude:(NSArray*)excludeArray;
-```
-
-There is a use case that you need to build NSDictionary params for AFNetworking:
-
-```objc
-+ (NSDictionary*) dictionaryForObject:(id)obj;
-+ (NSDictionary*) dictionaryForObject:(id)obj include:(NSArray*)includeArray;
-+ (NSMutableDictionary*) mutableDictionaryForObject:(id)obj;
-+ (NSMutableDictionary*) mutableDictionaryForObject:(id)obj include:(NSArray*)includeArray;
-```
-
-You can convert an object to NSDictionary so that NSLog can print its value too!
-
-If the json is an array, we can also convert the NSArray of dictionary into NSArray of object with predefined class. You can see the example for more detail.
-
-```objc
-+ (NSArray*) arrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
-+ (NSMutableArray*) mutableArrayOfClass:(Class)cls fromArrayOfDictionary:(NSArray*)array;
-```
-
-RMMapper supports relationship in your class as well. Lets assume we now have JSON for a room as below:
-
-```objc
-{
-  "id":879302,
-  "title":"My room",
-  "address":"Singapore",
-  "host":{"id":34045, "name":"David", "age":30, "email":"david@gmail.com"}
-}
-```
-
-You can define class RMRoom as below:
-
-```objc
-// RMRoom.h
-#import "RMUser.h"
-
-@interface RMRoom : NSObject
-
-@property (nonatomic, retain) NSNumber* id;
-@property (nonatomic, retain) NSString* title;
-@property (nonatomic, retain) NSString* address;
-@property (nonatomic, retain) RMUser* host;
-
-@end
-```
-
-Then if you want to access the host email, you can use ```room.host.email```
-
-
-Usage of RMMapper
-=================
-
-RMMapper is very helpful when you want to archive custom object into NSUserDefaults, or make an object copyable. 
-
-If you want to make RMUser class archivable so that you can save it into NSUserDefaults, just add this into the header: 
-
-```objc
-#import "NSObject+RMArchivable.h"
-``` 
-
-Then done, your class is ready to be archived! You can use category NSUserDefaults+RMSaveCustomObject to help you archive faster:
-
-```objc
-#import "NSUserDefaults+RMSaveCustomObject.h"
-
-// ...
-NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-[defaults rm_setCustomObject:user forKey:@"SAVED_DATA"];
-```
-
-To retrieve the custom object from NSUserDefaults:
-
-```objc
-user = [defaults rm_customObjectForKey:@"SAVED_DATA"];
-```
-
-If you want to exclude some properties from being archived, you can implement method `rm_excludedProperties` in `RMMapping` protocol in your class:
-
-```objc
-#import "RMUser.h"
-
-@implementation RMUser
-
-
-- (NSArray *)rm_excludedProperties
-{
-    return @[@"display"];
-}
-
-@end
-```
-
-To make a class copyable, just include below code into your class:
-
-```objc
-#import "NSObject+RMCopyable.h"
-```
 
 About
 =====
