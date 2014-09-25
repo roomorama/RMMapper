@@ -45,10 +45,10 @@ RMMapper supports relationship in your class as well. Lets assume we now have JS
 
 ```objc
 {
-"id":879302,
-"title":"My room",
-"address":"Singapore",
-"host":{"id":34045, "name":"David", "age":30, "email":"david@gmail.com"}
+    "id":879302,
+    "title":"My room",
+    "address":"Singapore",
+    "host":{"id":34045, "name":"David", "age":30, "email":"david@gmail.com"}
 }
 ```
 
@@ -80,11 +80,11 @@ If you want to map JSON key to class property, you can do so. In your model clas
 
 - (NSDictionary *)rm_dataKeysForClassProperties
 {
-// country_code is json key, countryCode is class property
-return @{
-@"countryCode" : @"country_code",
-@"currencyCode" : @"currency_code",
-};
+    // country_code is json key, countryCode is class property
+    return @{
+        @"countryCode" : @"country_code",
+        @"currencyCode" : @"currency_code",
+    };
 }
 
 @end
@@ -94,11 +94,11 @@ If your property is an array of another models, you can provide the model class 
 
 ```objc
 -(Class)rm_itemClassForArrayProperty:(NSString *)property {
-if ([property isEqualToString:@"topping"]) {
-return [RMTopping class];
-}
+    if ([property isEqualToString:@"topping"]) {
+        return [RMTopping class];
+    }
 
-return nil;
+    return nil;
 }
 ```
 
