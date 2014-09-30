@@ -300,7 +300,7 @@ static const char *getPropertyType(objc_property_t property) {
         // If val is custom class, we will try to parse this custom class to NSDictionary
         NSString *propertyType = properties[property];
         
-        if (![RMMapper hasBasicPrefix:propertyType]) {
+        if (![RMMapper hasBasicPrefix:propertyType] && val) {
             val = [RMMapper mutableDictionaryForObject:val include:nil];
         }
         
