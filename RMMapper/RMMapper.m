@@ -158,6 +158,11 @@ static const char *getPropertyType(objc_property_t property) {
         // Get value from dict from dataKey
         id value = dict[dataKey];
         
+        // Do not parse NSNull
+        if ([value isKindOfClass:[NSNull class]]) {
+            continue;
+        }
+        
         // If the property type is a custom class (not NSDictionary),
         // and the value is a dictionary,
         // convert the dictionary to object of that class
