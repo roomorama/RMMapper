@@ -181,7 +181,7 @@ self.emailLabel.text = [dict objectForKey:@"email"];
 
 This approach is okay but not scalable. Response from server can contains 20 or more different keys, and typing [dict objectForKey:@"key"] is tedious and error prone. If we type wrong key string, the app will crash! The compiler cannot help us detect error, and we can only find these crash when we do actual test at runtime. If we need to pass the data to another controller, we will have more repetitive tasks to do. And worse, if in the future server includes more attributes, then we have to edit all the ViewControllers to add the extra attributes.
 
-So we have to find a better approach. This time we define a plain model class and convert the NSDictionary/NSArray into the plain model object when we retrieve data from server. Then in the view, we can simply use that class and XCode can autocomplete the fields for us.
+So we have to find a better approach. This time we define a plain model class and convert the NSDictionary/NSArray into the plain model object when we retrieve data from server. Then in the view, we can simply use that class and Xcode can autocomplete the fields for us.
 
 Let define an user class to model above json:
 
@@ -204,7 +204,7 @@ self.ageLabel.text = [user.age stringValue];
 self.emailLabel.text = user.email;
 ```
 
-Well this is much cleaner! We have XCode auto complete the fields for us, so we don't have to worry about the wrong key like in previous approach. But we still need to convert the data into this object:
+Well this is much cleaner! We have Xcode auto complete the fields for us, so we don't have to worry about the wrong key like in previous approach. But we still need to convert the data into this object:
 
 ```objc
 RMUser* user = [[RMUser alloc] init];
