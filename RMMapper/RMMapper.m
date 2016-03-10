@@ -180,8 +180,13 @@ static const char *getPropertyType(objc_property_t property) {
         // Else, set value for key
         else {
             // If the value is basic type and is not array, parse it directly to obj
+            // http://stackoverflow.com/questions/3663266/kvc-string-conversion-not-working-for-bool-value
             if (![value isKindOfClass:[NSArray class]]) {
-                [obj setValue:value forKey:property];
+                @try{ [obj setValue:value forKey:property];
+                }@catch(NSException * e){ // catch the exception if the value is a boolean
+                    if ([e.name isEqualToString:NSInvalidArgumentException])
+                        [obj setValue:@([value intValue]) forKey:property];
+                }
             }
             
             // If property is NSArray or NSMutableArray, and if user provides
