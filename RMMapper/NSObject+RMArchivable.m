@@ -45,7 +45,12 @@
         for (NSString* key in propertyDict) {
             if (!excludedProperties || ![excludedProperties containsObject:key]) {
                 id value = [decoder decodeObjectForKey:key];
-                [self setValue:value forKey:key];
+                @try {
+                    [self setValue:value forKey:key];
+                }
+                @catch (NSException * e) {
+                    NSLog(@"Exception: %@", e);
+                }
             }
         }
     }
